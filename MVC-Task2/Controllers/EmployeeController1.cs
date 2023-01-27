@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MVC_Task2.Models;
 
 namespace MVC_Task2.Controllers
@@ -61,7 +62,7 @@ namespace MVC_Task2.Controllers
             oldemp.address = employee.address;
             oldemp.salary = employee.salary;
             oldemp.BirthDate = employee.BirthDate;
-            oldemp.supervisor = employee.supervisor;
+            oldemp.SupervisorSSN = employee.SupervisorSSN;
             db.SaveChanges();
 
             return RedirectToAction(nameof(Index));
@@ -73,6 +74,38 @@ namespace MVC_Task2.Controllers
             db.Employees.Remove(employee);
             db.SaveChanges();
             return RedirectToAction(nameof(Index));
+        }
+        //to login 
+        public IActionResult Login()
+        {
+            return View();
+        }
+        public IActionResult SaveLogin(Employee employeeTologin)
+        {
+
+            Employee employee = db.Employees.SingleOrDefault(e => e.SSN == employeeTologin.SSN && e.fname == employeeTologin.lname);
+
+            if (employee == null)
+            {
+                return View("Error");
+
+            }
+               
+            else
+            {
+                HttpContext.Session.SetInt32("SSN", employee.SSN);
+                return GetById(employee.SSN);
+            }
+
+        }
+
+        public IActionResult AllEmployeeManger()
+        {
+
+            List<Employee>? employees = db.Departments.Include(e => e.EmpManage).Where(e => e.emp_m != null).Select(e => e.EmpManage).ToList();
+
+            return View(employees);
+
         }
     }
 }

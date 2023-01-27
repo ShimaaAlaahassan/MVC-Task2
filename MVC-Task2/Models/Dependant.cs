@@ -6,9 +6,7 @@ namespace MVC_Task2.Models
 {
     public class Dependant
     {
-       
-        public int id { get; set; }
-        public string? Name { get; set; }
+        public string Name { get; set; }
         public string? Sex { get; set; }
 
         [Column(TypeName = "date")]

@@ -4,7 +4,7 @@ namespace MVC_Task2.Models
 {
     public class WorksOn
     {
-        
+        //composite pk
         public string Hours { get; set; }
 
         [ForeignKey("Employee")]

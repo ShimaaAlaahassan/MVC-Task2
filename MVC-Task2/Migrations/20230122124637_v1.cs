@@ -17,36 +17,12 @@ namespace MVCTask2.Migrations
                 {
                     Number = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    empm = table.Column<int>(name: "emp_m", type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Departments", x => x.Number);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Employees",
-                columns: table => new
-                {
-                    SSN = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    fname = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    lname = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Minit = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    sex = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    salary = table.Column<decimal>(type: "money", nullable: true),
-                    BirthDate = table.Column<DateTime>(type: "date", nullable: true),
-                    supervisorSSN = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employees", x => x.SSN);
-                    table.ForeignKey(
-                        name: "FK_Employees_Employees_supervisorSSN",
-                        column: x => x.supervisorSSN,
-                        principalTable: "Employees",
-                        principalColumn: "SSN");
                 });
 
             migrationBuilder.CreateTable(
@@ -75,6 +51,70 @@ namespace MVCTask2.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Employees",
+                columns: table => new
+                {
+                    SSN = table.Column<int>(type: "int", nullable: false),
+                    fname = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    lname = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Minit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    sex = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    salary = table.Column<decimal>(type: "money", nullable: true),
+                    BirthDate = table.Column<DateTime>(type: "date", nullable: true),
+                    deptIdw = table.Column<int>(name: "deptId_w", type: "int", nullable: true),
+                    deptIdm = table.Column<int>(name: "deptId_m", type: "int", nullable: true),
+                    supervisorSSN = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employees", x => x.SSN);
+                    table.ForeignKey(
+                        name: "FK_Employees_Departments_SSN",
+                        column: x => x.SSN,
+                        principalTable: "Departments",
+                        principalColumn: "Number",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Employees_Departments_deptId_w",
+                        column: x => x.deptIdw,
+                        principalTable: "Departments",
+                        principalColumn: "Number");
+                    table.ForeignKey(
+                        name: "FK_Employees_Employees_supervisorSSN",
+                        column: x => x.supervisorSSN,
+                        principalTable: "Employees",
+                        principalColumn: "SSN");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Projects",
+                columns: table => new
+                {
+                    ProNumber = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    location = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    deptNum = table.Column<int>(type: "int", nullable: true),
+                    departmentLocationDeptNumber = table.Column<int>(type: "int", nullable: true),
+                    departmentLocationlocation = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Projects", x => x.ProNumber);
+                    table.ForeignKey(
+                        name: "FK_Projects_Departments_deptNum",
+                        column: x => x.deptNum,
+                        principalTable: "Departments",
+                        principalColumn: "Number");
+                    table.ForeignKey(
+                        name: "FK_Projects_departmentLocations_departmentLocationDeptNumber_departmentLocationlocation",
+                        columns: x => new { x.departmentLocationDeptNumber, x.departmentLocationlocation },
+                        principalTable: "departmentLocations",
+                        principalColumns: new[] { "DeptNumber", "location" });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Dependants",
                 columns: table => new
                 {
@@ -95,34 +135,6 @@ namespace MVCTask2.Migrations
                         principalTable: "Employees",
                         principalColumn: "SSN",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Projects",
-                columns: table => new
-                {
-                    ProNumber = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    deptNum = table.Column<int>(type: "int", nullable: false),
-                    departmentLocationDeptNumber = table.Column<int>(type: "int", nullable: true),
-                    departmentLocationlocation = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Projects", x => x.ProNumber);
-                    table.ForeignKey(
-                        name: "FK_Projects_Departments_deptNum",
-                        column: x => x.deptNum,
-                        principalTable: "Departments",
-                        principalColumn: "Number",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Projects_departmentLocations_departmentLocationDeptNumber_departmentLocationlocation",
-                        columns: x => new { x.departmentLocationDeptNumber, x.departmentLocationlocation },
-                        principalTable: "departmentLocations",
-                        principalColumns: new[] { "DeptNumber", "location" });
                 });
 
             migrationBuilder.CreateTable(
@@ -159,6 +171,11 @@ namespace MVCTask2.Migrations
                 name: "IX_Dependants_EmpSSN",
                 table: "Dependants",
                 column: "EmpSSN");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Employees_deptId_w",
+                table: "Employees",
+                column: "deptId_w");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_supervisorSSN",

@@ -18,12 +18,24 @@ namespace MVC_Task2.Models
         public int? salary { get; set; }
         [Column(TypeName = "date")]
         public DateTime? BirthDate { get; set; }
-
-        public Employee? supervisor { get; set; }
-        public List<Employee> Employees { get; set;}
+        //
+        [ForeignKey("deptWork")]
+        public int? deptId_w { get; set; }
+        [ForeignKey("deptManage")]
+        public int? deptId_m { get; set; }
+        
+        public virtual Department? deptWork { get; set; }
+        public virtual Department? deptManage { get; set; }
+        //fk api
+        public int? SupervisorSSN { get; set; }
+        public virtual Employee? Supervisor { get; set; }
+       
+        public List<Employee>? Employees { get; set;}
         public virtual List<WorksOn>? WorksOn { get; set; }
 
-        public virtual List<Dependant> Dependants { get; set; }
+        public virtual List<Dependant>? Dependants { get; set; }
+       
+
 
     }
 }

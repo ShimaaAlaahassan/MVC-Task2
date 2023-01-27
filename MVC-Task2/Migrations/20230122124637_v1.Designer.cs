@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MVCTask2.Migrations
 {
     [DbContext(typeof(Companydbcontext))]
-    [Migration("20230120191038_v2")]
-    partial class v2
+    [Migration("20230122124637_v1")]
+    partial class v1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,9 @@ namespace MVCTask2.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Number"));
+
+                    b.Property<int?>("emp_m")
+                        .HasColumnType("int");
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
@@ -74,10 +77,7 @@ namespace MVCTask2.Migrations
             modelBuilder.Entity("MVC_Task2.Models.Employee", b =>
                 {
                     b.Property<int>("SSN")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SSN"));
 
                     b.Property<DateTime?>("BirthDate")
                         .HasColumnType("date");
@@ -87,6 +87,12 @@ namespace MVCTask2.Migrations
 
                     b.Property<string>("address")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("deptId_m")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("deptId_w")
+                        .HasColumnType("int");
 
                     b.Property<string>("fname")
                         .HasColumnType("nvarchar(max)");
@@ -104,6 +110,8 @@ namespace MVCTask2.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("SSN");
+
+                    b.HasIndex("deptId_w");
 
                     b.HasIndex("supervisorSSN");
 
@@ -200,9 +208,23 @@ namespace MVCTask2.Migrations
 
             modelBuilder.Entity("MVC_Task2.Models.Employee", b =>
                 {
+                    b.HasOne("MVC_Task2.Models.Department", "deptManage")
+                        .WithOne("EmpManage")
+                        .HasForeignKey("MVC_Task2.Models.Employee", "SSN")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MVC_Task2.Models.Department", "deptWork")
+                        .WithMany("EmpWork")
+                        .HasForeignKey("deptId_w");
+
                     b.HasOne("MVC_Task2.Models.Employee", "supervisor")
                         .WithMany("Employees")
                         .HasForeignKey("supervisorSSN");
+
+                    b.Navigation("deptManage");
+
+                    b.Navigation("deptWork");
 
                     b.Navigation("supervisor");
                 });
@@ -255,6 +277,10 @@ namespace MVCTask2.Migrations
             modelBuilder.Entity("MVC_Task2.Models.Department", b =>
                 {
                     b.Navigation("DepartmentLocations");
+
+                    b.Navigation("EmpManage");
+
+                    b.Navigation("EmpWork");
 
                     b.Navigation("Projects");
                 });
